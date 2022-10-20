@@ -22,3 +22,8 @@ vim.keymap.set('n', 'fb', builtin.buffers, {})
 vim.keymap.set('n', 'fh', builtin.help_tags, {})
 
 vim.keymap.set('n', 'ts', builtin.treesitter, {})
+
+
+-- fzf-lua 
+vim.keymap.set('n', 'fz', ':FzfLua', opts)
+

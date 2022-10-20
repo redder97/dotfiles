@@ -27,11 +27,20 @@ require('packer').startup(function()
   use 'windwp/nvim-ts-autotag'
   use 'norcalli/nvim-colorizer.lua'
 
+
   use 'navarasu/onedark.nvim'
 
   use {
     'nvim-treesitter/nvim-treesitter',
     run = function() require('nvim-treesitter.install').update({with_sync = true}) end
+  }
+
+  use {
+    'junegunn/fzf', run = './install --bin'
+  }
+
+  use {
+    'ibhagwan/fzf-lua'
   }
 end)
 
