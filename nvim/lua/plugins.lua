@@ -132,13 +132,6 @@ require'lspconfig'.clangd.setup {
 }
 
 
--- lsp
-require('lspconfig')['tsserver'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
-}
-
-
 -- nvim-lspconfig
 -- Mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -174,10 +167,14 @@ local on_attach = function(client, bufnr)
   vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
 end
 
+-- Set up lspconfig.
+local capabilities = require('cmp_nvim_lsp').default_capabilities()
+
 local lsp_flags = {
   -- This is the default in Nvim 0.7+
   debounce_text_changes = 150,
 }
+
 require('lspconfig')['pyright'].setup{
     on_attach = on_attach,
     flags = lsp_flags,
@@ -185,6 +182,7 @@ require('lspconfig')['pyright'].setup{
 require('lspconfig')['tsserver'].setup{
     on_attach = on_attach,
     flags = lsp_flags,
+    capabilities = capabilities
 }
 require('lspconfig')['rust_analyzer'].setup{
     on_attach = on_attach,
@@ -194,9 +192,6 @@ require('lspconfig')['rust_analyzer'].setup{
       ["rust-analyzer"] = {}
     }
 }
-
-
-
 
 -- nvim-cmp
 -- Set up nvim-cmp.
@@ -259,14 +254,6 @@ require('lspconfig')['rust_analyzer'].setup{
       { name = 'cmdline' }
     })
   })
-
-  -- Set up lspconfig.
-  local capabilities = require('cmp_nvim_lsp').default_capabilities()
-  -- Replace <YOUR_LSP_SERVER> with each lsp server you've enabled.
-  require('lspconfig')['tsserver'].setup {
-    capabilities = capabilities
-  }
-
 
 
 -- nvim-treesitter

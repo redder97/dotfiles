@@ -7,12 +7,15 @@ keymap('n', '<c-s>', ':w<CR>', {})
 keymap('i', '<c-s>', '<Esc>:w<CR>a', {})
 
 local opts = { noremap = true, silent = true, i }
+local bufops = ops
 
 keymap('n', '<c-j>', '<c-w>j', opts)
 keymap('n', '<c-h>', '<c-w>h', opts)
 keymap('n', '<c-k>', '<c-w>k', opts)
 keymap('n', '<c-l>', '<c-w>l', opts)
 
+--
+ 
 
 -- telescope
 local builtin = require('telescope.builtin')
@@ -25,5 +28,5 @@ vim.keymap.set('n', 'ts', builtin.treesitter, {})
 
 
 -- fzf-lua 
-vim.keymap.set('n', 'fz', ':FzfLua', opts)
+vim.keymap.set('n', 'fz', ':FzfLua<CR>', opts)
 
