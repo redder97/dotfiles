@@ -27,6 +27,9 @@ require('packer').startup(function()
   use 'windwp/nvim-ts-autotag'
   use 'norcalli/nvim-colorizer.lua'
 
+  use {"akinsho/toggleterm.nvim", tag = '*', config = function()
+    require("toggleterm").setup()
+  end}
 
   use 'navarasu/onedark.nvim'
 
@@ -42,7 +45,29 @@ require('packer').startup(function()
   use {
     'ibhagwan/fzf-lua'
   }
+
+  use {'akinsho/bufferline.nvim', tag = "v3.*", requires = 'kyazdani42/nvim-web-devicons'}
 end)
+
+
+-- toggleterm
+require('toggleterm').setup({
+  open_mapping = [[<c-\>]],
+  hide_numbers = true,
+  shell = vim.o.shell,
+  direction = 'float',
+  shading_factor = 2,
+  float_opts = {
+    border = 'curved',
+    winblend = 0,
+    highlights = {
+      border = 'Normal',
+      background = 'Normal'
+    },
+    height = 40,
+    width = 100
+  },
+})
 
 -- onedark
 require('onedark').setup{
@@ -65,133 +90,81 @@ require('lualine').setup {
   options = {
     icons_enabled = true,
     theme = 'palenight',
-    component_separators = { left = '', right = ''},
-    section_separators = { left = '', right = ''},
-    disabled_filetypes = {
-      statusline = {},
-      winbar = {},
-    },
-    ignore_focus = {},
-    always_divide_middle = true,
-    globalstatus = false,
-    refresh = {
-      statusline = 1000,
-      tabline = 1000,
-      winbar = 1000,
-    }
+    section_separators = { left = '', right = '' },
+    component_separators = { left = '', right = '' },
+    disabled_filetypes = {}
   },
   sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'branch', 'diff', 'diagnostics'},
-    lualine_c = {'filename'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
+    lualine_a = { 'mode' },
+    lualine_b = { 'branch' },
+    lualine_c = { {
+      'filename',
+      file_status = true, -- displays file status (readonly status, modified status)
+      path = 0 -- 0 = just filename, 1 = relative path, 2 = absolute path
+    } },
+    lualine_x = {
+      { 'diagnostics', sources = { "nvim_diagnostic" }, symbols = { error = ' ', warn = ' ', info = ' ',
+        hint = ' ' } },
+      'encoding',
+      'filetype'
+    },
+    lualine_y = { 'progress' },
+    lualine_z = { 'location' }
   },
   inactive_sections = {
     lualine_a = {},
     lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
+    lualine_c = { {
+      'filename',
+      file_status = true, -- displays file status (readonly status, modified status)
+      path = 1 -- 0 = just filename, 1 = relative path, 2 = absolute path
+    } },
+    lualine_x = { 'location' },
     lualine_y = {},
     lualine_z = {}
   },
   tabline = {},
-  winbar = {},
-  inactive_winbar = {},
-  extensions = {}
+  extensions = { 'fugitive' }
 }
 
-
--- cmp buffer
-require('cmp').setup({
-  sources = {
-    { name = 'buffer' },
-  },
-})
-
-
--- nvim lsp
+-- cmp
 require'cmp'.setup {
+  snippet = {
+    expand = function(args)
+      require('luasnip').lsp_expand(args.body)
+    end,
+  },
+  mapping = require('cmp').mapping.preset.insert({
+    ['<C-d>'] = require('cmp').mapping.scroll_docs(-4),
+    ['<C-f>'] = require('cmp').mapping.scroll_docs(4),
+    ['<C-Space>'] = require('cmp').mapping.complete(),
+    ['<C-e>'] = require('cmp').mapping.close(),
+    ['<CR>'] = require('cmp').mapping.confirm({
+      behavior = require('cmp').ConfirmBehavior.Replace,
+      select = true
+    }),
+  }),
   sources = {
-    { name = 'nvim_lsp' }
+    { name = 'nvim_lsp' },
+    { name = 'buffer' }
+  },
+  formatting = {
+    format = require('lspkind').cmp_format({ with_text = false, maxwidth = 50 })
   }
 }
 
 
+vim.cmd [[
+  set completeopt=menuone,noinsert,noselect
+  highlight! default link CmpItemKind CmpItemMenuDefault
+]]
+
+
 -- mason setup
 require('mason').setup()
-require('mason-lspconfig').setup()
-
--- The nvim-cmp almost supports LSP's capabilities so You should advertise it to LSP servers..
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
--- The following example advertise capabilities to `clangd`.
-require'lspconfig'.clangd.setup {
-  capabilities = capabilities,
-}
-
-
--- nvim-lspconfig
--- Mappings.
--- See `:help vim.diagnostic.*` for documentation on any of the below functions
-local opts = { noremap=true, silent=true }
-vim.keymap.set('n', '<space>e', vim.diagnostic.open_float, opts)
-vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, opts)
-vim.keymap.set('n', ']d', vim.diagnostic.goto_next, opts)
-vim.keymap.set('n', '<space>q', vim.diagnostic.setloclist, opts)
-
--- Use an on_attach function to only map the following keys
--- after the language server attaches to the current buffer
-local on_attach = function(client, bufnr)
-  -- Enable completion triggered by <c-x><c-o>
-  vim.api.nvim_buf_set_option(bufnr, 'omnifunc', 'v:lua.vim.lsp.omnifunc')
-
-  -- Mappings.
-  -- See `:help vim.lsp.*` for documentation on any of the below functions
-  local bufopts = { noremap=true, silent=true, buffer=bufnr }
-  vim.keymap.set('n', 'gD', vim.lsp.buf.declaration, bufopts)
-  vim.keymap.set('n', 'gd', vim.lsp.buf.definition, bufopts)
-  vim.keymap.set('n', 'K', vim.lsp.buf.hover, bufopts)
-  vim.keymap.set('n', 'gi', vim.lsp.buf.implementation, bufopts)
-  vim.keymap.set('n', '<C-k>', vim.lsp.buf.signature_help, bufopts)
-  vim.keymap.set('n', '<space>wa', vim.lsp.buf.add_workspace_folder, bufopts)
-  vim.keymap.set('n', '<space>wr', vim.lsp.buf.remove_workspace_folder, bufopts)
-  vim.keymap.set('n', '<space>wl', function()
-    print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-  end, bufopts)
-  vim.keymap.set('n', '<space>D', vim.lsp.buf.type_definition, bufopts)
-  vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, bufopts)
-  vim.keymap.set('n', '<space>ca', vim.lsp.buf.code_action, bufopts)
-  vim.keymap.set('n', 'gr', vim.lsp.buf.references, bufopts)
-  vim.keymap.set('n', '<space>f', function() vim.lsp.buf.format { async = true } end, bufopts)
-end
-
--- Set up lspconfig.
-local capabilities = require('cmp_nvim_lsp').default_capabilities()
-
-local lsp_flags = {
-  -- This is the default in Nvim 0.7+
-  debounce_text_changes = 150,
-}
-
-require('lspconfig')['pyright'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
-}
-require('lspconfig')['tsserver'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
-    capabilities = capabilities
-}
-require('lspconfig')['rust_analyzer'].setup{
-    on_attach = on_attach,
-    flags = lsp_flags,
-    -- Server-specific settings...
-    settings = {
-      ["rust-analyzer"] = {}
-    }
-}
+require('mason-lspconfig').setup({
+  automatic_installation = true
+})
 
 -- nvim-cmp
 -- Set up nvim-cmp.
@@ -258,48 +231,120 @@ require('lspconfig')['rust_analyzer'].setup{
 
 -- nvim-treesitter
 require'nvim-treesitter.configs'.setup {
-  -- A list of parser names, or "all"
-  ensure_installed = {"lua" },
-
-  -- Install parsers synchronously (only applied to `ensure_installed`)
-  sync_install = false,
-
-  -- Automatically install missing parsers when entering buffer
-  -- Recommendation: set to false if you don't have `tree-sitter` CLI installed locally
-  auto_install = true,
-
-  -- List of parsers to ignore installing (for "all")
-  ignore_install = {},
-
+  highlight = {
+    enable = true,
+    disable = {},
+  },
+  indent = {
+    enable = true,
+    disable = {},
+  },
+  ensure_installed = {
+    "tsx",
+    "json",
+    "yaml",
+    "css",
+    "html",
+    "lua",
+    "scss",
+    "typescript",
+    "javascript"
+  },
   autotag = {
     enable = true,
   },
-
-  ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-  -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
-
-  highlight = {
-    -- `false` will disable the whole extension
-    enable = true,
-
-    -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-    -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-    -- the name of the parser)
-    -- list of language that will be disabled
-    disable = { "c", "rust" },
-    -- Or use a function for more flexibility, e.g. to disable slow treesitter highlight for large files
-    disable = function(lang, buf)
-        local max_filesize = 100 * 1024 -- 100 KB
-        local ok, stats = pcall(vim.loop.fs_stat, vim.api.nvim_buf_get_name(buf))
-        if ok and stats and stats.size > max_filesize then
-            return true
-        end
-    end,
-
-    -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-    -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-    -- Using this option may slow down your editor, and you may see some duplicate highlights.
-    -- Instead of true it can also be a list of languages
-    additional_vim_regex_highlighting = false,
-  },
 }
+
+require('lspkind').init({
+  -- enables text annotations
+  --
+  -- default: true
+  mode = 'symbol',
+
+  -- default symbol map
+  -- can be either 'default' (requires nerd-fonts font) or
+  -- 'codicons' for codicon preset (requires vscode-codicons font)
+  --
+  -- default: 'default'
+  preset = 'codicons',
+
+  -- override preset symbols
+  --
+  -- default: {}
+  symbol_map = {
+    Text = "",
+    Method = "",
+    Function = "",
+    Constructor = "",
+    Field = "ﰠ",
+    Variable = "",
+    Class = "ﴯ",
+    Interface = "",
+    Module = "",
+    Property = "ﰠ",
+    Unit = "塞",
+    Value = "",
+    Enum = "",
+    Keyword = "",
+    Snippet = "",
+    Color = "",
+    File = "",
+    Reference = "",
+    Folder = "",
+    EnumMember = "",
+    Constant = "",
+    Struct = "פּ",
+    Event = "",
+    Operator = "",
+    TypeParameter = ""
+  },
+})
+
+-- bufferline
+
+require("bufferline").setup({
+  options = {
+    mode = "tabs",
+    separator_style = 'slant',
+    always_show_bufferline = false,
+    show_buffer_close_icons = false,
+    show_close_icon = false,
+    color_icons = true
+  },
+  highlights = {
+    separator = {
+      fg = '#073642',
+      bg = '#002b36',
+    },
+    separator_selected = {
+      fg = '#073642',
+    },
+    background = {
+      fg = '#657b83',
+      bg = '#002b36'
+    },
+    buffer_selected = {
+      fg = '#fdf6e3',
+      bold = true,
+    },
+    fill = {
+      bg = '#073642'
+    }
+  },
+
+})
+
+
+-- icons
+
+
+require('nvim-web-devicons').setup {
+  -- your personnal icons can go here (to override)
+  -- DevIcon will be appended to `name`
+  override = {
+  },
+  -- globally enable default icons (default to false)
+  -- will get overriden by `get_icons` option
+  default = true
+}
+
