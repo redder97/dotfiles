@@ -1,6 +1,6 @@
-### A collection of plugins I use for my setup. 
+## A collection of plugins I use for my setup. 
 
-## plugins/setup used for `neovim`
+### plugins/setup used for `neovim`
 - [packer](https://github.com/wbthomason/packer.nvim)
 - [nvim-telescope](https://github.com/nvim-telescope/telescope.nvim)
 - [nvim-lualine](https://github.com/nvim-lualine/lualine.nvim)
@@ -22,6 +22,11 @@
 - [fzf-lua](https://github.com/ibhagwan/fzf-lua)
 
 very big thank you to all maintainers of the plugin and [craftdogz's setup](https://github.com/craftzdog/dotfiles-public) for inspiring me. Please star the repos!
+
+### Dependencies
+- [packer](https://github.com/wbthomason/packer.nvim)
+- [FiraCode NerdFont](https://www.nerdfonts.com/font-downloads) 
+- 
 
 Quick limited demo: 
 
