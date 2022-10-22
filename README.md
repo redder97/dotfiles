@@ -17,3 +17,6 @@
 - [auto-pairs](https://github.com/windwp/nvim-autopairs)
 - [colorizer](https://github.com/norcalli/nvim-colorizer.lua)
 - [onedark](https://github.com/navarasu/onedark.nvim)
+- [bufferline](https://github.com/akinsho/bufferline.nvim)
+- [fzf](https://github.com/junegunn/fzf.vim)
+- [fzf-lua](https://github.com/ibhagwan/fzf-lua)
