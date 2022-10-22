@@ -20,3 +20,11 @@
 - [bufferline](https://github.com/akinsho/bufferline.nvim)
 - [fzf](https://github.com/junegunn/fzf.vim)
 - [fzf-lua](https://github.com/ibhagwan/fzf-lua)
+
+very big thank you to all maintainers of the plugin and [craftdogz's setup](https://github.com/craftzdog/dotfiles-public) for inspiring me. Please star the repos!
+
+Quick limited demo: 
+
+
+https://user-images.githubusercontent.com/43529780/197326225-7bc7c111-fa0a-4117-b6bf-eb442abfe385.mp4
+
