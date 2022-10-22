@@ -1,6 +1,8 @@
-vim.bo.expandtab = true
-vim.bo.shiftwidth = 2
-vim.bo.softtabstop = 2
+vim.go.expandtab = true
+vim.go.shiftwidth = 2
+vim.go.softtabstop = 2
+vim.go.tabstop = 2
+
 
 local keymap = vim.api.nvim_set_keymap
 keymap('n', '<c-s>', ':w<CR>', {})
@@ -17,7 +19,7 @@ keymap('n', '<c-l>', '<c-w>l', opts)
 -- buffers
 vim.keymap.set('n', '<Tab>', '<Cmd>BufferLineCycleNext<CR>', {})
 vim.keymap.set('n', '<S-Tab>', '<Cmd>BufferLineCyclePrev<CR>', {})
- 
+
 
 -- telescope
 local builtin = require('telescope.builtin')
@@ -29,6 +31,5 @@ vim.keymap.set('n', 'fh', builtin.help_tags, {})
 vim.keymap.set('n', 'ts', builtin.treesitter, {})
 
 
--- fzf-lua 
+-- fzf-lua
 vim.keymap.set('n', 'fz', ':FzfLua<CR>', opts)
-
