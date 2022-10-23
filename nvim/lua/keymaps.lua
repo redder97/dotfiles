@@ -30,6 +30,8 @@ vim.keymap.set('n', 'fh', builtin.help_tags, {})
 
 vim.keymap.set('n', 'ts', builtin.treesitter, {})
 
+-- telescope file browser
+vim.keymap.set('n', '<space>fb', ':Telescope file_browser path=%:p:h<CR>', { noremap = true })
 
 -- fzf-lua
 vim.keymap.set('n', 'fz', ':FzfLua<CR>', opts)

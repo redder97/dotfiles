@@ -11,6 +11,8 @@ require('packer').startup(function()
 		requires = { 'kyazdani42/nvim-web-devicons', opt = true }
 	}
 
+	use { "nvim-telescope/telescope-file-browser.nvim" }
+
 	use 'onsails/lspkind-nvim'
 
 	use 'hrsh7th/cmp-buffer' -- nvim-cmp source for buffer words
@@ -49,6 +51,10 @@ require('packer').startup(function()
 	use { 'akinsho/bufferline.nvim', tag = "v3.*", requires = 'kyazdani42/nvim-web-devicons' }
 
 	use 'L3MON4D3/LuaSnip'
+
+	use { 'lewis6991/gitsigns.nvim' }
+
+	use 'jose-elias-alvarez/null-ls.nvim'
 end)
 
 
@@ -349,3 +355,27 @@ require('nvim-web-devicons').setup {
 	-- will get overriden by `get_icons` option
 	default = true
 }
+
+-- telescope file browser
+-- You don't need to set any of these options.
+-- IMPORTANT!: this is only a showcase of how you can set default options!
+require("telescope").setup {
+	extensions = {
+		file_browser = {
+			theme = "ivy",
+			-- disables netrw and use telescope-file-browser in its place
+			hijack_netrw = true,
+		},
+	},
+}
+-- To get telescope-file-browser loaded and working with telescope,
+-- you need to call load_extension, somewhere after setup function:
+require("telescope").load_extension "file_browser"
+
+require('gitsigns').setup()
+
+require('null-ls').setup({
+	sources = {
+		require('null-ls').builtins.formatting.eslint_d
+	}
+})
